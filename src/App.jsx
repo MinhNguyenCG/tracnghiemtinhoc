@@ -1,0 +1,193 @@
+import React, { useMemo, useState } from 'react';
+import { questions, quizMeta } from './data/questions';
+
+function App() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedAnswers, setSelectedAnswers] = useState({});
+
+  const currentQuestion = questions[currentIndex];
+  const currentSelection = selectedAnswers[currentQuestion?.id];
+
+  const correctCount = useMemo(
+    () =>
+      questions.reduce((total, question) => {
+        return total + (selectedAnswers[question.id] === question.answer ? 1 : 0);
+      }, 0),
+    [selectedAnswers]
+  );
+
+  const answeredCount = Object.keys(selectedAnswers).length;
+  const completion = Math.round((answeredCount / questions.length) * 100);
+
+  const handleSelect = (optionId) => {
+    if (!currentQuestion || currentSelection) {
+      return;
+    }
+
+    setSelectedAnswers((prev) => ({
+      ...prev,
+      [currentQuestion.id]: optionId,
+    }));
+  };
+
+  const goToQuestion = (index) => {
+    setCurrentIndex(index);
+  };
+
+  const nextQuestion = () => {
+    setCurrentIndex((prev) => Math.min(prev + 1, questions.length - 1));
+  };
+
+  const previousQuestion = () => {
+    setCurrentIndex((prev) => Math.max(prev - 1, 0));
+  };
+
+  if (!currentQuestion) {
+    return <div className="empty-state">Không tìm thấy dữ liệu câu hỏi.</div>;
+  }
+
+  return (
+    <main className="app-shell">
+      <section className="hero-panel">
+        <div className="hero-copy">
+          <span className="eyebrow">React quiz UI</span>
+          <h1>Ôn tập trắc nghiệm Tin học với phản hồi đúng sai ngay lập tức</h1>
+          <p>
+            Toàn bộ câu hỏi được đọc từ <code>question.md</code>, gồm giao diện mượt, dễ tập trung,
+            thao tác nhanh trên cả desktop lẫn mobile.
+          </p>
+        </div>
+
+        <div className="stats-grid">
+          <article className="stat-card accent">
+            <span>Tổng câu</span>
+            <strong>{quizMeta.total}</strong>
+          </article>
+          <article className="stat-card">
+            <span>Đã trả lời</span>
+            <strong>{answeredCount}</strong>
+          </article>
+          <article className="stat-card">
+            <span>Trả lời đúng</span>
+            <strong>{correctCount}</strong>
+          </article>
+          <article className="stat-card">
+            <span>Chuyên đề</span>
+            <strong>{quizMeta.sections.length}</strong>
+          </article>
+        </div>
+      </section>
+
+      <section className="content-grid">
+        <aside className="question-rail">
+          <div className="rail-header">
+            <h2>Danh sách câu</h2>
+            <span>
+              {currentIndex + 1}/{questions.length}
+            </span>
+          </div>
+
+          <div className="question-list" role="list" aria-label="Danh sách câu hỏi">
+            {questions.map((question, index) => {
+              const answerState = selectedAnswers[question.id];
+              const isCorrect = answerState === question.answer;
+
+              return (
+                <button
+                  key={question.id}
+                  type="button"
+                  className={[
+                    'question-chip',
+                    index === currentIndex ? 'active' : '',
+                    answerState ? (isCorrect ? 'correct' : 'wrong') : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                  onClick={() => goToQuestion(index)}
+                >
+                  <span>{question.number}</span>
+                  <small>{question.section}</small>
+                </button>
+              );
+            })}
+          </div>
+        </aside>
+
+        <section className="question-card">
+          <div className="question-card-header">
+            <div>
+              <span className="section-tag">{currentQuestion.section}</span>
+              <h2>
+                Câu {currentQuestion.number}. {currentQuestion.question}
+              </h2>
+            </div>
+
+            <div
+              className="progress-ring"
+              aria-label="Tiến độ"
+              style={{
+                background: `radial-gradient(circle at center, rgba(17, 21, 29, 0.98) 58%, transparent 60%), conic-gradient(var(--accent) ${completion * 3.6}deg, rgba(255, 255, 255, 0.12) 0deg)`,
+              }}
+            >
+              <strong>{completion}%</strong>
+              <span>hoàn thành</span>
+            </div>
+          </div>
+
+          <div className="options-grid">
+            {currentQuestion.options.map((option) => {
+              const isSelected = currentSelection === option.id;
+              const isAnswer = currentQuestion.answer === option.id;
+
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  className={[
+                    'option-card',
+                    isSelected ? 'selected' : '',
+                    currentSelection && isAnswer ? 'is-answer' : '',
+                    currentSelection && isSelected && !isAnswer ? 'is-wrong' : '',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                  onClick={() => handleSelect(option.id)}
+                  disabled={Boolean(currentSelection)}
+                >
+                  <span className="option-label">{option.id}</span>
+                  <span className="option-text">{option.text}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className={['feedback-panel', currentSelection ? 'visible' : ''].join(' ')}>
+            {currentSelection ? (
+              <>
+                <div className={currentSelection === currentQuestion.answer ? 'feedback ok' : 'feedback nope'}>
+                  {currentSelection === currentQuestion.answer
+                    ? 'Chính xác. Bạn đã chọn đúng đáp án.'
+                    : `Chưa đúng. Đáp án đúng là ${currentQuestion.answer}.`}
+                </div>
+                {currentQuestion.explanation ? <p>{currentQuestion.explanation}</p> : null}
+              </>
+            ) : (
+              <div className="feedback hint">Chọn một đáp án để xem kết quả ngay.</div>
+            )}
+          </div>
+
+          <div className="actions-row">
+            <button type="button" className="nav-button secondary" onClick={previousQuestion}>
+              Câu trước
+            </button>
+            <button type="button" className="nav-button primary" onClick={nextQuestion}>
+              Câu tiếp
+            </button>
+          </div>
+        </section>
+      </section>
+    </main>
+  );
+}
+
+export default App;
