@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import ContentBlocks from './components/ContentBlocks';
 import { questions, quizMeta } from './data/questions';
 
 function App() {
@@ -117,9 +118,8 @@ function App() {
           <div className="question-card-header">
             <div>
               <span className="section-tag">{currentQuestion.section}</span>
-              <h2>
-                Câu {currentQuestion.number}. {currentQuestion.question}
-              </h2>
+              <h2>Câu {currentQuestion.number}.</h2>
+              <ContentBlocks blocks={currentQuestion.promptBlocks} className="question-content" />
             </div>
 
             <div
@@ -155,7 +155,7 @@ function App() {
                   disabled={Boolean(currentSelection)}
                 >
                   <span className="option-label">{option.id}</span>
-                  <span className="option-text">{option.text}</span>
+                  <ContentBlocks blocks={option.blocks} className="option-content" />
                 </button>
               );
             })}

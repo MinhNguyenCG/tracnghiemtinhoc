@@ -8,32 +8,110 @@ function cleanInlineCode(text) {
   return text.replace(/`([^`]+)`/g, '$1').trim();
 }
 
+function normalizeSpacing(text) {
+  return text.replace(/\r\n/g, '\n').trim();
+}
+
+function markdownToBlocks(markdown) {
+  const normalized = normalizeSpacing(markdown);
+
+  if (!normalized) {
+    return [];
+  }
+
+  const parts = normalized.split(/```/);
+
+  return parts
+    .map((part, index) => {
+      if (index % 2 === 1) {
+        const lines = part.split('\n');
+        const firstLine = lines[0]?.trim() ?? '';
+        const hasLanguage = /^[a-zA-Z0-9_+#-]+$/.test(firstLine);
+
+        return {
+          type: 'code',
+          language: hasLanguage ? firstLine : '',
+          content: hasLanguage ? lines.slice(1).join('\n').trim() : part.trim(),
+        };
+      }
+
+      return {
+        type: 'text',
+        content: part,
+      };
+    })
+    .flatMap((block) => {
+      if (block.type === 'code') {
+        return block.content ? [block] : [];
+      }
+
+      return block.content
+        .split(/\n{2,}/)
+        .map((textPart) => cleanInlineCode(textPart))
+        .filter(Boolean)
+        .map((content) => ({ type: 'text', content }));
+    });
+}
+
+function parseOptionChunks(optionLines) {
+  const options = [];
+  let currentOption = null;
+
+  for (const line of optionLines) {
+    const optionMatch = line.match(/^([A-D])\.\s*(.*)$/);
+
+    if (optionMatch) {
+      if (currentOption) {
+        options.push(currentOption);
+      }
+
+      currentOption = {
+        id: optionMatch[1],
+        raw: optionMatch[2] ? [optionMatch[2]] : [],
+      };
+
+      continue;
+    }
+
+    if (currentOption) {
+      currentOption.raw.push(line);
+    }
+  }
+
+  if (currentOption) {
+    options.push(currentOption);
+  }
+
+  return options.map((option) => {
+    const rawText = option.raw.join('\n').trim();
+    const blocks = markdownToBlocks(rawText);
+    const fallbackText = cleanInlineCode(
+      rawText
+        .replace(/```[\s\S]*?```/g, ' ')
+        .replace(/\n+/g, ' ')
+        .trim()
+    );
+
+    return {
+      id: option.id,
+      text: fallbackText,
+      blocks,
+    };
+  });
+}
+
 function extractChoiceLetter(text) {
   const match = stripDiacritics(text).match(/Chon\s+([A-D])/i);
   return match ? match[1].toUpperCase() : null;
 }
 
-function parseOptions(block) {
-  return block
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => /^[A-D]\./.test(line))
-    .map((line) => {
-      const match = line.match(/^([A-D])\.\s*(.*)$/);
-      return {
-        id: match[1],
-        text: cleanInlineCode(match[2]),
-      };
-    });
-}
-
 function parseQuestions(markdown) {
-  const normalized = markdown.replace(/\r\n/g, '\n');
+  const normalized = normalizeSpacing(markdown);
   const sectionBlocks = normalized.split(/\n(?=##\s+)/).filter(Boolean);
 
   return sectionBlocks.flatMap((sectionBlock) => {
     const sectionTitleMatch = sectionBlock.match(/^##\s+(.*)$/m);
-    const sectionTitle = sectionTitleMatch ? sectionTitleMatch[1].trim() : 'Cau hoi';
+    const sectionTitle = sectionTitleMatch ? sectionTitleMatch[1].trim() : 'Câu hỏi';
     const content = sectionBlock.replace(/^##\s+.*$/m, '').trim();
     const questionBlocks = content
       .split(/\n(?=Câu\s+\d+\.)/g)
@@ -49,17 +127,35 @@ function parseQuestions(markdown) {
           return null;
         }
 
-        const options = parseOptions(block);
-        const answer = extractChoiceLetter(block);
-        const explanationMatch = block.match(/Lời giải\n([\s\S]*?)\nChọn\s+[A-D]/i);
-        const explanation = explanationMatch
-          ? cleanInlineCode(
-              explanationMatch[1]
-                .replace(/```[\s\S]*?```/g, '')
-                .replace(/^-\s+/gm, '')
-                .replace(/\n{2,}/g, ' ')
-            )
-          : '';
+        const body = lines.slice(1).join('\n');
+        const explanationIndex = lines.findIndex((line) => line.trim() === 'Lời giải');
+        const contentLines = explanationIndex === -1 ? lines.slice(1) : lines.slice(1, explanationIndex);
+        const explanationLines = explanationIndex === -1 ? [] : lines.slice(explanationIndex + 1);
+
+        const firstOptionIndex = contentLines.findIndex((line) => /^[A-D]\./.test(line.trim()));
+
+        if (firstOptionIndex === -1) {
+          return null;
+        }
+
+        const promptLines = [];
+        if (titleMatch[2]) {
+          promptLines.push(titleMatch[2]);
+        }
+        promptLines.push(...contentLines.slice(0, firstOptionIndex));
+
+        const optionLines = contentLines.slice(firstOptionIndex);
+        const options = parseOptionChunks(optionLines);
+        const answer = extractChoiceLetter(explanationLines.join('\n')) || extractChoiceLetter(body);
+        const explanationText = explanationLines.join('\n');
+        const explanation = cleanInlineCode(
+          explanationText
+            .replace(/\nChọn\s+[A-D]\s*$/i, '')
+            .replace(/```[\s\S]*?```/g, ' ')
+            .replace(/^[-*]\s+/gm, '')
+            .replace(/\n+/g, ' ')
+            .trim()
+        );
 
         if (!options.length || !answer) {
           return null;
@@ -70,6 +166,7 @@ function parseQuestions(markdown) {
           section: sectionTitle,
           number: titleMatch[1],
           question: cleanInlineCode(titleMatch[2]),
+          promptBlocks: markdownToBlocks(promptLines.join('\n').trim()),
           options,
           answer,
           explanation,
