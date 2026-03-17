@@ -1,24 +1,37 @@
 import React, { useMemo, useState } from 'react';
 import ContentBlocks from './components/ContentBlocks';
-import { questions, quizMeta } from './data/questions';
+import { questions } from './data/questions';
+
+function shuffleItems(items) {
+  const nextItems = [...items];
+
+  for (let index = nextItems.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [nextItems[index], nextItems[randomIndex]] = [nextItems[randomIndex], nextItems[index]];
+  }
+
+  return nextItems;
+}
 
 function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState({});
+  const [isShuffled, setIsShuffled] = useState(false);
+  const [questionItems, setQuestionItems] = useState(questions);
 
-  const currentQuestion = questions[currentIndex];
+  const currentQuestion = questionItems[currentIndex];
   const currentSelection = selectedAnswers[currentQuestion?.id];
 
   const correctCount = useMemo(
     () =>
-      questions.reduce((total, question) => {
+      questionItems.reduce((total, question) => {
         return total + (selectedAnswers[question.id] === question.answer ? 1 : 0);
       }, 0),
-    [selectedAnswers]
+    [questionItems, selectedAnswers]
   );
 
   const answeredCount = Object.keys(selectedAnswers).length;
-  const completion = Math.round((answeredCount / questions.length) * 100);
+  const completion = Math.round((answeredCount / questionItems.length) * 100);
 
   const handleSelect = (optionId) => {
     if (!currentQuestion || currentSelection) {
@@ -36,11 +49,26 @@ function App() {
   };
 
   const nextQuestion = () => {
-    setCurrentIndex((prev) => Math.min(prev + 1, questions.length - 1));
+    setCurrentIndex((prev) => Math.min(prev + 1, questionItems.length - 1));
   };
 
   const previousQuestion = () => {
     setCurrentIndex((prev) => Math.max(prev - 1, 0));
+  };
+
+  const resetSession = (nextItems, shuffled) => {
+    setQuestionItems(nextItems);
+    setIsShuffled(shuffled);
+    setCurrentIndex(0);
+    setSelectedAnswers({});
+  };
+
+  const handleShuffle = () => {
+    resetSession(shuffleItems(questions), true);
+  };
+
+  const handleRestoreOrder = () => {
+    resetSession(questions, false);
   };
 
   if (!currentQuestion) {
@@ -62,7 +90,7 @@ function App() {
         <div className="stats-grid">
           <article className="stat-card accent">
             <span>Tổng câu</span>
-            <strong>{quizMeta.total}</strong>
+            <strong>{questionItems.length}</strong>
           </article>
           <article className="stat-card">
             <span>Đã trả lời</span>
@@ -73,9 +101,18 @@ function App() {
             <strong>{correctCount}</strong>
           </article>
           <article className="stat-card">
-            <span>Chuyên đề</span>
-            <strong>{quizMeta.sections.length}</strong>
+            <span>Chế độ</span>
+            <strong>{isShuffled ? 'Trộn' : 'Gốc'}</strong>
           </article>
+        </div>
+
+        <div className="hero-actions">
+          <button type="button" className="nav-button primary" onClick={handleShuffle}>
+            Xáo trộn câu hỏi
+          </button>
+          <button type="button" className="nav-button secondary" onClick={handleRestoreOrder}>
+            Thứ tự gốc
+          </button>
         </div>
       </section>
 
@@ -83,13 +120,11 @@ function App() {
         <aside className="question-rail">
           <div className="rail-header">
             <h2>Danh sách câu</h2>
-            <span>
-              {currentIndex + 1}/{questions.length}
-            </span>
+            <span>{currentIndex + 1}/{questionItems.length}</span>
           </div>
 
           <div className="question-list" role="list" aria-label="Danh sách câu hỏi">
-            {questions.map((question, index) => {
+            {questionItems.map((question, index) => {
               const answerState = selectedAnswers[question.id];
               const isCorrect = answerState === question.answer;
 

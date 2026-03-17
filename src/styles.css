@@ -109,6 +109,13 @@ code {
   line-height: 1.7;
 }
 
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -255,6 +262,18 @@ code {
   margin: 0;
   line-height: 1.7;
   white-space: pre-wrap;
+}
+
+.content-list {
+  margin: 0;
+  padding-left: 22px;
+  line-height: 1.7;
+  display: grid;
+  gap: 6px;
+}
+
+.content-list.ordered {
+  padding-left: 26px;
 }
 
 .question-content {
@@ -458,6 +477,10 @@ code {
     align-items: flex-start;
     flex-direction: column;
   }
+
+  .hero-actions {
+    width: 100%;
+  }
 }
 
 @media (max-width: 640px) {
@@ -492,6 +515,10 @@ code {
   }
 
   .actions-row {
+    flex-direction: column;
+  }
+
+  .hero-actions {
     flex-direction: column;
   }
 
