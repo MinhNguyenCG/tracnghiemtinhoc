@@ -390,6 +390,12 @@ code {
   line-height: 1.7;
 }
 
+.feedback-content {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
 .actions-row {
   margin-top: 28px;
 }

@@ -1,3 +1,5 @@
+import React from 'react';
+
 function ContentBlocks({ blocks, className = '' }) {
   if (!blocks?.length) {
     return null;

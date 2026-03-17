@@ -118,8 +118,8 @@ function App() {
           <div className="question-card-header">
             <div>
               <span className="section-tag">{currentQuestion.section}</span>
-              <h2>Câu {currentQuestion.number}.</h2>
-              <ContentBlocks blocks={currentQuestion.promptBlocks} className="question-content" />
+              <h2>{currentQuestion.heading}.</h2>
+              <ContentBlocks blocks={currentQuestion.stem.blocks} className="question-content" />
             </div>
 
             <div
@@ -155,7 +155,7 @@ function App() {
                   disabled={Boolean(currentSelection)}
                 >
                   <span className="option-label">{option.id}</span>
-                  <ContentBlocks blocks={option.blocks} className="option-content" />
+                  <ContentBlocks blocks={option.content.blocks} className="option-content" />
                 </button>
               );
             })}
@@ -169,7 +169,9 @@ function App() {
                     ? 'Chính xác. Bạn đã chọn đúng đáp án.'
                     : `Chưa đúng. Đáp án đúng là ${currentQuestion.answer}.`}
                 </div>
-                {currentQuestion.explanation ? <p>{currentQuestion.explanation}</p> : null}
+                {currentQuestion.explanation.blocks.length ? (
+                  <ContentBlocks blocks={currentQuestion.explanation.blocks} className="feedback-content" />
+                ) : null}
               </>
             ) : (
               <div className="feedback hint">Chọn một đáp án để xem kết quả ngay.</div>

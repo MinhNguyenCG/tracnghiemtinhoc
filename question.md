@@ -459,9 +459,6 @@ Làm tròn đến 4 chữ số sau dấu phẩy:
 
 Chọn B
 
-Mình tiếp tục theo đúng mẫu bạn yêu cầu, bắt đầu từ **Bài 20**.
-Mình chỉ rút trích các câu nhìn rõ và có đáp án khoanh rõ trong ảnh. **Bài 22 - Câu 10** bị cắt mất phần dưới nên mình chưa đưa vào để tránh sai.
-
 ## Bài 20: Câu lệnh lặp For
 
 Câu 1. Số công việc cần phải lặp với số lần xác định?
@@ -1319,3 +1316,479 @@ A = [2, 3, 6, 4]
 ```
 
 Chọn D
+
+## Bài 22: Kiểu dữ liệu danh sách
+
+Câu 11. Cho `arr = ['xuan', 'ha', 1.4, 'dong', '3', 4.5, 7]`. Đâu là giá trị của `arr[3]`?
+A. `1.4`.
+B. `dong`.
+C. `ha`.
+D. `3`.
+
+Lời giải
+Trong Python, chỉ số của danh sách bắt đầu từ `0`.
+
+Ta có:
+
+- `arr[0] = 'xuan'`
+- `arr[1] = 'ha'`
+- `arr[2] = 1.4`
+- `arr[3] = 'dong'`
+
+Vì vậy giá trị của `arr[3]` là `"dong"`.
+Chọn B
+
+Câu 12. Lệnh nào để duyệt từng phần tử của danh sách?
+A. `for`.
+B. `while - for`.
+C. `for` kết hợp với lệnh `range()`.
+D. `while` kết hợp với lệnh `range()`.
+
+Lời giải
+Theo nội dung bài học và đáp án trong tài liệu, cách được dùng để duyệt lần lượt các phần tử của danh sách là dùng `for` kết hợp với `range()`.
+
+Ví dụ:
+
+```python
+for i in range(len(A)):
+    print(A[i])
+```
+
+Chọn C
+
+Câu 13. Lệnh xoá một phần tử của một danh sách `A` có chỉ số `i` là:
+A. `list.del(i)`.
+B. `A.del(i)`.
+C. `del A[i]`.
+D. `A.del[i]`.
+
+Lời giải
+Trong Python, để xoá phần tử ở vị trí chỉ số `i` của danh sách `A`, ta dùng câu lệnh:
+
+```python
+del A[i]
+```
+
+Các cách viết còn lại không đúng cú pháp Python.
+Chọn C
+
+Câu 14. Chương trình sau thực hiện công việc gì?
+
+```python
+S = 0
+for i in range(len(A)):
+    if A[i] > 0:
+        S = S + A[i]
+print(S)
+```
+
+A. Duyệt từng phần tử trong `A`.
+B. Tính tổng các phần tử trong `A`.
+C. Tính tổng các phần tử không âm trong `A`.
+D. Tính tổng các phần tử dương trong `A`.
+
+Lời giải
+Chương trình duyệt qua từng phần tử của danh sách `A`.
+Điều kiện:
+
+```python
+if A[i] > 0:
+```
+
+chỉ chọn các phần tử **lớn hơn 0**, tức là các phần tử dương.
+Sau đó cộng các phần tử đó vào `S`.
+
+Vì vậy chương trình dùng để **tính tổng các phần tử dương trong `A`**.
+Chọn D
+
+## Bài 23: Một số lệnh làm việc với dữ liệu danh sách
+
+Câu 1. Toán tử nào dùng để kiểm tra một giá trị có nằm trong danh sách không?
+A. `in`.
+B. `int`.
+C. `range`.
+D. `append`.
+
+Lời giải
+Toán tử `in` dùng để kiểm tra một phần tử có thuộc danh sách hay không.
+
+Ví dụ:
+
+```python
+3 in [1, 2, 3, 4]
+```
+
+cho kết quả `True`.
+Chọn A
+
+Câu 2. Kết quả của chương trình sau là gì?
+
+```python
+A = [1, 2, 3, 4, 5, 6, 5]
+for k in A:
+    print(k, end=" ")
+```
+
+A. `1 2 3 4 5 6`
+B. `1 2 3 4 5 6 5`
+C. `1 2 3 4 5`
+D. `2 3 4 5 6 5`
+
+Lời giải
+Vòng lặp:
+
+```python
+for k in A:
+```
+
+sẽ lần lượt lấy từng phần tử của danh sách `A` và in ra.
+Danh sách `A` có 7 phần tử là:
+
+```python
+[1, 2, 3, 4, 5, 6, 5]
+```
+
+nên kết quả in ra là:
+
+```python
+1 2 3 4 5 6 5
+```
+
+Chọn B
+
+Câu 3. Ngoài việc kết hợp lệnh `for` và `range` để duyệt phần tử trong danh sách, có thể sử dụng câu lệnh nào khác?
+A. `int`.
+B. `while`.
+C. `in range`.
+D. `in`.
+
+Lời giải
+Khi duyệt trực tiếp các phần tử trong danh sách, ta thường dùng:
+
+```python
+for x in A:
+    print(x)
+```
+
+Ở đây, từ khóa quan trọng để duyệt trực tiếp phần tử là `in`.
+Theo đáp án của tài liệu, chọn D.
+Chọn D
+
+Câu 4. Giả sử `A = ['a', 'b', 'c', 'd', 2, 3, 4]`. Các biểu thức sau trả về giá trị đúng hay sai?
+
+```python
+6 in A
+'a' in A
+```
+
+A. `True, False`.
+B. `True, True`.
+C. `False, True`.
+D. `False, False`.
+
+Lời giải
+Xét từng biểu thức:
+
+- `6 in A` → sai, vì `6` không có trong danh sách `A`
+- `'a' in A` → đúng, vì `'a'` là phần tử đầu tiên của danh sách
+
+Vậy kết quả là:
+
+```python
+False, True
+```
+
+Chọn C
+
+Câu 5. Giả sử `A = [5, 6, 7, 8, 9, 10, 11, 12]`. Biểu thức sau trả về giá trị đúng hay sai?
+
+```python
+(3 + 4 - 5 + 18 // 4) in A
+```
+
+A. `True`.
+B. `False`.
+C. Không xác định.
+D. Câu lệnh bị lỗi.
+
+Lời giải
+Ta tính giá trị biểu thức trước:
+
+```python
+3 + 4 - 5 + 18 // 4
+= 7 - 5 + 4
+= 2 + 4
+= 6
+```
+
+Khi đó biểu thức trở thành:
+
+```python
+6 in A
+```
+
+Vì `6` có trong danh sách `A`, nên kết quả là `True`.
+Chọn A
+
+Câu 6. Lệnh nào sau đây xoá toàn bộ danh sách?
+A. `clear()`.
+B. `exit()`.
+C. `remove()`.
+D. `del()`.
+
+Lời giải
+Phương thức `clear()` dùng để xoá toàn bộ phần tử của danh sách, làm cho danh sách trở thành rỗng.
+
+Ví dụ:
+
+```python
+A.clear()
+```
+
+Chọn A
+
+Câu 7. Phát biểu nào sau đây là sai?
+A. Sau khi thực hiện lệnh `clear()`, danh sách gốc trở thành rỗng.
+B. Lệnh `remove()` có chức năng xoá một phần tử có giá trị cho trước.
+C. Lệnh `remove()` xoá tất cả các phần tử có giá trị cho trước trong `list`.
+D. `clear()` có tác dụng xoá toàn bộ các danh sách.
+
+Lời giải
+Lệnh `remove(x)` chỉ xoá **phần tử đầu tiên** có giá trị `x` trong danh sách, không xoá tất cả các phần tử cùng giá trị.
+
+Ví dụ:
+
+```python
+A = [1, 2, 2, 3]
+A.remove(2)
+```
+
+sau đó `A` trở thành:
+
+```python
+[1, 2, 3]
+```
+
+Vì vậy phát biểu sai là C.
+Chọn C
+
+Câu 8. Số phát biểu đúng là:
+
+1. Sau khi thực hiện lệnh `clear()`, các phần tử trả về giá trị `0`.
+2. Lệnh `remove` trả về giá trị `False` nếu không có trong danh sách.
+3. `remove()` có tác dụng xoá một phần tử có giá trị cho trước trong `list`.
+4. Lệnh `remove()` có tác dụng xoá một phần tử ở vị trí cho trước.
+
+A. 1.
+B. 2.
+C. 0.
+D. 3.
+
+Lời giải
+Xét từng phát biểu:
+
+1. Sai, vì `clear()` làm danh sách rỗng chứ không biến các phần tử thành `0`.
+2. Sai, vì nếu không tìm thấy giá trị cần xoá thì `remove()` báo lỗi, không trả về `False`.
+3. Đúng, vì `remove()` xoá một phần tử có giá trị cho trước.
+4. Sai, vì xoá theo vị trí là dùng `del`, `pop()`, không phải `remove()`.
+
+Vậy chỉ có **1 phát biểu đúng**.
+Chọn A
+
+Câu 9. Sau khi thực hiện các câu lệnh sau, mảng `A` như thế nào?
+
+```python
+A = [1, 2, 3, 4, 5]
+A.remove(2)
+print(A)
+```
+
+A. `[1, 2, 3, 4]`.
+B. `[2, 3, 4, 5]`.
+C. `[1, 2, 4, 5]`.
+D. `[1, 3, 4, 5]`.
+
+Lời giải
+Lệnh:
+
+```python
+A.remove(2)
+```
+
+xoá phần tử có **giá trị** bằng `2` trong danh sách `A`.
+
+Ban đầu:
+
+```python
+[1, 2, 3, 4, 5]
+```
+
+sau khi xoá `2`, còn:
+
+```python
+[1, 3, 4, 5]
+```
+
+Chọn D
+
+Câu 10. Phần tử thứ bao nhiêu trong mảng `A` bị xoá?
+
+```python
+A = [10, 20, 3, 30, 20, 30, 6, 3, 2, 8, 9]
+A.remove(3)
+print(A)
+```
+
+A. 2.
+B. 3.
+C. 8.
+D. 4.
+
+Lời giải
+Lệnh `remove(3)` sẽ xoá **phần tử đầu tiên có giá trị bằng 3**.
+
+Danh sách ban đầu:
+
+```python
+[10, 20, 3, 30, 20, 30, 6, 3, 2, 8, 9]
+```
+
+Phần tử `3` đầu tiên nằm ở **vị trí thứ 3** nếu đếm theo thứ tự 1, 2, 3, ...
+
+Vì vậy phần tử bị xoá là phần tử thứ 3.
+Chọn B
+
+Câu 11. Kết quả khi thực hiện chương trình sau?
+
+```python
+A = [1, 2, 3, 5]
+A.insert(2, 4)
+print(A)
+```
+
+A. `1, 2, 3, 4`.
+B. `1, 2, 4, 3, 5`.
+C. `1, 2, 3, 4, 5`.
+D. `1, 2, 4, 5`.
+
+Lời giải
+Lệnh:
+
+```python
+A.insert(2, 4)
+```
+
+chèn giá trị `4` vào vị trí chỉ số `2`.
+
+Danh sách ban đầu:
+
+```python
+[1, 2, 3, 5]
+```
+
+Sau khi chèn, phần tử `4` đứng trước phần tử đang ở chỉ số `2` là `3`, nên kết quả là:
+
+```python
+[1, 2, 4, 3, 5]
+```
+
+Chọn B
+
+Câu 12. Lệnh sau chèn phần tử cần thêm vào vị trí thứ mấy trong danh sách `A`?
+
+```python
+A.insert(-5, 3)
+```
+
+A. 3.
+B. 1.
+C. 0.
+D. 2.
+
+Lời giải
+Theo đáp án trong tài liệu, lệnh này chèn phần tử vào **vị trí thứ nhất** của danh sách.
+
+Trong Python, nếu chỉ số chèn âm và nhỏ hơn phạm vi hợp lệ, phần tử sẽ được chèn về đầu danh sách.
+Vì vậy đáp án đúng là vị trí thứ 1.
+Chọn B
+
+Câu 13. Danh sách `A` trước và sau lệnh `insert()` là `[1, 3, 5, 0]` và `[1, 3, 4, 5, 0]`. Lệnh đã dùng là lệnh gì?
+A. `insert(2, 4)`.
+B. `insert(4, 2)`.
+C. `insert(3, 4)`.
+D. `insert(4, 3)`.
+
+Lời giải
+Muốn từ:
+
+```python
+[1, 3, 5, 0]
+```
+
+thành:
+
+```python
+[1, 3, 4, 5, 0]
+```
+
+thì phải chèn số `4` vào trước phần tử `5`, tức là tại vị trí chỉ số `2`.
+
+Lệnh đúng là:
+
+```python
+insert(2, 4)
+```
+
+Chọn A
+
+Câu 14. Danh sách `A` sau lệnh 1 lệnh `remove()` và 3 lệnh `append()` có 8 phần tử. Hỏi ban đầu danh sách `A` có bao nhiêu phần tử?
+A. 8.
+B. 7.
+C. 4.
+D. 6.
+
+Lời giải
+Gọi số phần tử ban đầu là `n`.
+
+- Sau 1 lệnh `remove()`, số phần tử còn: `n - 1`
+- Sau 3 lệnh `append()`, số phần tử là: `n - 1 + 3 = n + 2`
+
+Theo đề bài:
+
+```python
+n + 2 = 8
+```
+
+Suy ra:
+
+```python
+n = 6
+```
+
+Chọn D
+
+Câu 15. Chọn phát biểu sai trong các phát biểu sau khi nói về câu lệnh `insert` trong Python:
+A. `insert(index, value)` sẽ chèn giá trị `value` vào danh sách tại vị trí `index` và đẩy các phần tử sang phải.
+B. Nếu chỉ số chèn `< 0` thì chèn vào đầu danh sách.
+C. Phần tử có chỉ số `k` sẽ được thay thế bởi phần tử thêm vào.
+D. Nếu chỉ số chèn `> len(A)` thì chèn vào cuối danh sách.
+
+Lời giải
+Lệnh `insert()` là lệnh **chèn thêm phần tử**, không phải thay thế phần tử cũ.
+
+Ví dụ:
+
+```python
+A = [1, 2, 3]
+A.insert(1, 9)
+```
+
+thì `A` trở thành:
+
+```python
+[1, 9, 2, 3]
+```
+
+Phần tử cũ không bị thay thế, mà được dời sang phải.
+Vì vậy phát biểu sai là C.
+Chọn C
