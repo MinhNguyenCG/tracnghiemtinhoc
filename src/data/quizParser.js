@@ -1,5 +1,3 @@
-import rawContent from '../../question.md?raw';
-
 function stripDiacritics(text) {
   return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
@@ -71,8 +69,18 @@ function extractAnswerLetter(text) {
   return match ? match[1].toUpperCase() : null;
 }
 
-function splitSections(markdown) {
-  return normalizeText(markdown).split(/\n(?=##\s+)/).filter(Boolean);
+function splitSections(markdown, defaultSection) {
+  const normalized = normalizeText(markdown);
+
+  if (!normalized) {
+    return [];
+  }
+
+  if (/^##\s+/m.test(normalized)) {
+    return normalized.split(/\n(?=##\s+)/).filter(Boolean);
+  }
+
+  return [`## ${defaultSection}\n\n${normalized}`];
 }
 
 function splitQuestionBlocks(sectionContent) {
@@ -155,9 +163,11 @@ function parseQuestion(sectionTitle, block) {
   };
 }
 
-function parseQuestions(markdown) {
-  return splitSections(markdown).flatMap((sectionBlock) => {
-    const sectionTitle = sectionBlock.match(/^##\s+(.*)$/m)?.[1]?.trim() ?? 'Câu hỏi';
+export function parseQuestions(markdown, options = {}) {
+  const { defaultSection = 'Câu hỏi' } = options;
+
+  return splitSections(markdown, defaultSection).flatMap((sectionBlock) => {
+    const sectionTitle = sectionBlock.match(/^##\s+(.*)$/m)?.[1]?.trim() ?? defaultSection;
     const sectionContent = sectionBlock.replace(/^##\s+.*$/m, '').trim();
 
     return splitQuestionBlocks(sectionContent)
@@ -166,9 +176,9 @@ function parseQuestions(markdown) {
   });
 }
 
-export const questions = parseQuestions(rawContent);
-
-export const quizMeta = {
-  total: questions.length,
-  sections: [...new Set(questions.map((item) => item.section))],
-};
+export function createQuizMeta(questions) {
+  return {
+    total: questions.length,
+    sections: [...new Set(questions.map((item) => item.section))],
+  };
+}
